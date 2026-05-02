@@ -1,0 +1,54 @@
+from fastapi import APIRouter
+from app.models.company import CompanySignup, CompanyLogin
+from app.services.auth import hash_password, verify_password
+from app.services.database import supabase
+
+
+router = APIRouter()
+
+@router.post("/auth/register")
+def signup_company(data: CompanySignup):
+    hashed = hash_password(data.password)
+    response = (supabase.table("companies")
+                .insert({
+                    "name" : data.name,
+                    "email" : data.email,
+                    "password" : hashed, 
+                    "website_url" : str(data.website_url),
+                    "company_information" : data.company_information,
+                    "company_vibe" : data.company_vibe
+                })
+                .execute()
+                )
+    return {"message": response}
+
+
+@router.post("/auth/login")
+def login_company(data: CompanyLogin):
+    try:
+        # Query the database for a company with the provided email
+        response = (
+            supabase.table("companies")
+            .select("*")
+            .eq("email", str(data.email))
+            .execute()
+        )
+
+        # If no company found, return generic error  
+        if not response.data:
+            return {"message": "Invalid email or password"}
+
+        company = response.data[0]
+
+        # Verify the plain password against the stored hash
+        if not verify_password(data.password, company["password"]):
+            return {"message": "Invalid email or password"}
+
+        # Password is correct - return a JWT token here next
+        return {"message": "Login successful", "company_id": company["id"]}
+
+    except Exception as e:
+        # Catch unexpected errors and return a clean message
+        return {"message": f"Something went wrong: {str(e)}"}
+
+

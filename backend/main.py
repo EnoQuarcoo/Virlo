@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 from app.services.database import supabase 
+from app.routers.companies import router
+
 
 app = FastAPI()
 
@@ -25,3 +27,5 @@ def get_company_name():
         .execute()
     )
     return response.data
+
+app.include_router(router)
