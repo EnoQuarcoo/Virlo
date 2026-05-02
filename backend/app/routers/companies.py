@@ -1,22 +1,23 @@
 from fastapi import APIRouter
 from app.models.company import CompanySignup, CompanyLogin
-from app.services.auth import hash_password, verify_password
+from app.services.auth import hash_password, verify_password, create_access_token
 from app.services.database import supabase
 
 
 router = APIRouter()
+
 
 @router.post("/auth/register")
 def signup_company(data: CompanySignup):
     hashed = hash_password(data.password)
     response = (supabase.table("companies")
                 .insert({
-                    "name" : data.name,
-                    "email" : data.email,
-                    "password" : hashed, 
-                    "website_url" : str(data.website_url),
-                    "company_information" : data.company_information,
-                    "company_vibe" : data.company_vibe
+                    "name": data.name,
+                    "email": data.email,
+                    "password": hashed,
+                    "website_url": str(data.website_url),
+                    "company_information": data.company_information,
+                    "company_vibe": data.company_vibe
                 })
                 .execute()
                 )
@@ -34,7 +35,7 @@ def login_company(data: CompanyLogin):
             .execute()
         )
 
-        # If no company found, return generic error  
+        # If no company found, return generic error
         if not response.data:
             return {"message": "Invalid email or password"}
 
@@ -44,11 +45,10 @@ def login_company(data: CompanyLogin):
         if not verify_password(data.password, company["password"]):
             return {"message": "Invalid email or password"}
 
-        # Password is correct - return a JWT token here next
-        return {"message": "Login successful", "company_id": company["id"]}
+        # Password is correct - return a JWT token 
+        token = create_access_token({"company_id": company["id"]})
+        return {"message": "Login successful", "token": token}
 
     except Exception as e:
         # Catch unexpected errors and return a clean message
         return {"message": f"Something went wrong: {str(e)}"}
-
-

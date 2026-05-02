@@ -1,4 +1,10 @@
 from passlib.context import CryptContext
+from jose import jwt
+from datetime import datetime, timedelta, timezone
+import os
+from app.config import JWT_SECRET
+
+
 
 # CryptContext is our hashing settings object.
 # We tell it to use bcrypt as the hashing algorithm.
@@ -16,3 +22,10 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     # against the hash we have stored in the database
     # Returns True if they match, False otherwise
     return pwd_context.verify(plain_password, hashed_password)
+
+def create_access_token(data: dict):
+    payload = data.copy()
+    expiry = datetime.now(timezone.utc) + timedelta(days=7)
+    payload["exp"] = expiry
+    token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
+    return token
