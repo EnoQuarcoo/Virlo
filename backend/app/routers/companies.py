@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException 
 from app.models.company import CompanySignup, CompanyLogin
 from app.services.auth import hash_password, verify_password, create_access_token
 from app.services.database import supabase
@@ -37,18 +37,19 @@ def login_company(data: CompanyLogin):
 
         # If no company found, return generic error
         if not response.data:
-            return {"message": "Invalid email or password"}
+            raise HTTPException(status_code=401, detail="Invalid email or password")
 
         company = response.data[0]
 
         # Verify the plain password against the stored hash
         if not verify_password(data.password, company["password"]):
-            return {"message": "Invalid email or password"}
+            raise HTTPException(status_code=401, detail="Invalid email or password")
 
         # Password is correct - return a JWT token 
         token = create_access_token({"company_id": company["id"]})
         return {"message": "Login successful", "token": token}
-
+    except HTTPException:
+        raise
     except Exception as e:
         # Catch unexpected errors and return a clean message
         return {"message": f"Something went wrong: {str(e)}"}
