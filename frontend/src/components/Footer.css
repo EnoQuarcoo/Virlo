@@ -1,0 +1,30 @@
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 64px;
+  background: transparent;
+}
+
+.footer-brand {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.25);
+  letter-spacing: -0.01em;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.25);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: rgba(255, 255, 255, 0.55);
+}

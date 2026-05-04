@@ -1,5 +1,5 @@
 from passlib.context import CryptContext
-from jose import jwt
+from jose import jwt, JWTError
 from datetime import datetime, timedelta, timezone
 import os
 from app.config import JWT_SECRET
@@ -29,3 +29,15 @@ def create_access_token(data: dict):
     payload["exp"] = expiry
     token = jwt.encode(payload, JWT_SECRET, algorithm="HS256")
     return token
+
+
+def decode_access_token(token):
+    try: 
+        access_token = jwt.decode(token, JWT_SECRET, algorithms=['HS256'])
+        return access_token
+    except JWTError:
+        return None
+    
+
+
+

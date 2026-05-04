@@ -6,7 +6,7 @@ class CreateCampaign(BaseModel):
     campaign_name : str
     campaign_description : Optional[str] = None
     website_url : HttpUrl
-    vibe : str 
+    vibe : Optional[str] = None
     reward_description : str 
     is_demo : bool = False 
     expires_at : Optional[datetime] = None 

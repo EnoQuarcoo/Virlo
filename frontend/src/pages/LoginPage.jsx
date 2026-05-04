@@ -20,7 +20,7 @@ export default function LoginPage() {
       body: JSON.stringify({ email, password }),
     });
     if (!response.ok) {
-      console.log("SOmething went wrong");
+      console.log("Something went wrong");
       const data = await response.json();
       setError("Invalid email or password")
     } else {

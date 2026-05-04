@@ -1,0 +1,38 @@
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28px 64px;
+  background: transparent;
+}
+
+.navbar-logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: -0.02em;
+}
+
+.navbar-logout {
+  background: #212127;
+  color: rgba(255, 255, 255, 0.55);
+  border: none;
+  padding: 10px 22px;
+  border-radius: 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow:
+    -3px -3px 10px #2e2e34,
+    6px 6px 16px #141418;
+  transition: box-shadow 0.2s ease, color 0.2s ease, transform 0.18s ease;
+}
+
+.navbar-logout:hover {
+  color: #fff;
+  box-shadow:
+    inset 4px 4px 10px #141418,
+    inset -2px -2px 8px #2e2e34;
+  transform: translateY(1px);
+}
