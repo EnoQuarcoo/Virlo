@@ -41,4 +41,33 @@ def create_campaign(data: CreateCampaign, authorization: str= Header(None)):
                 .execute()
                 )
     return {"message": "Campaign created", "campaign": response.data[0]}
+
+
+@router.get("/campaigns")
+def fetch_campaigns( authorization: str= Header(None)):
+    # Reject request immediately if no Authorization header was sent
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Unauthorized")
     
+    # Strip "Bearer " prefix to get the raw JWT token
+    token = authorization.replace("Bearer ", "")
+
+    # Decode and validate the token — returns None if invalid or expired
+    decoded_access_token = decode_access_token(token)
+
+    # If token is invalid or expired, reject the request
+    if decoded_access_token is None:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    # Extract company_id from the decoded token payload
+    company_id = decoded_access_token["company_id"]
+
+    response = (
+        supabase.table("campaigns")
+        .select("*")
+        .eq("company_id", company_id )
+        .execute()
+    )
+
+    return {"message": "Campaigns retrieved", "campaigns": response.data}
+  
