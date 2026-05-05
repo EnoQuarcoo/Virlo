@@ -21,7 +21,10 @@ def signup_company(data: CompanySignup):
                 })
                 .execute()
                 )
-    return {"message": response}
+    company = response.data[0]
+    token = create_access_token({"company_id": company["id"]})
+    return {"message": "Account creation successful. Logging you in", "token": token}
+
 
 
 @router.post("/auth/login")

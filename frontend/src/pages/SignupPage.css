@@ -1,16 +1,16 @@
-.login-page {
+.signup-page {
   min-height: 100vh;
   background: #212127;
   display: flex;
   flex-direction: column;
 }
 
-.login-nav {
+.signup-nav {
   padding: 30px 64px;
   background: transparent;
 }
 
-.login-wrap {
+.signup-wrap {
   flex: 1;
   display: flex;
   align-items: center;
@@ -18,7 +18,7 @@
   padding: 60px 24px;
 }
 
-.login-card {
+.signup-card {
   width: 100%;
   max-width: 420px;
   background: #212127;
@@ -29,7 +29,7 @@
     12px 12px 32px #141418;
 }
 
-.login-card h2 {
+.signup-card h2 {
   font-size: 1.7rem;
   font-weight: 700;
   color: #fff;
@@ -37,13 +37,13 @@
   margin-bottom: 8px;
 }
 
-.login-card > p {
+.signup-card > p {
   font-size: 0.9rem;
   color: rgba(255, 255, 255, 0.5);
   margin-bottom: 36px;
 }
 
-.login-form {
+.signup-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -76,13 +76,17 @@
     inset -3px -3px 10px #2e2e34;
   transition: box-shadow 0.2s ease;
 }
+
 .field input:focus {
   box-shadow:
     inset 5px 5px 14px #141418,
     inset -3px -3px 10px #2e2e34,
     0 0 0 1.5px rgba(181, 101, 118, 0.45);
 }
-.field input::placeholder { color: rgba(255, 255, 255, 0.18); }
+
+.field input::placeholder {
+  color: rgba(255, 255, 255, 0.18);
+}
 
 .btn-submit {
   margin-top: 8px;
@@ -100,6 +104,7 @@
     0 0 22px rgba(181, 101, 118, 0.18);
   transition: box-shadow 0.22s ease, transform 0.18s ease;
 }
+
 .btn-submit:hover {
   box-shadow:
     inset 5px 5px 14px #141418,

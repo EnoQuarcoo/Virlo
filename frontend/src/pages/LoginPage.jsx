@@ -64,6 +64,10 @@ export default function LoginPage() {
               Sign In
             </button>
           </form>
+          <p className="auth-switch">
+            Don't have an account?{" "}
+            <Link to="/signup" className="auth-switch-link">Sign up</Link>
+          </p>
         </div>
       </div>
     </div>

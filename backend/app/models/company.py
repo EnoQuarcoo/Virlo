@@ -3,10 +3,10 @@ from typing import Optional
 
 
 class CompanySignup(BaseModel):
-    name: str
+    name: Optional[str] = None 
     email: EmailStr
     password: str
-    website_url: HttpUrl
+    website_url: Optional[str] = None 
     company_information: Optional[str] = None
     company_vibe:  Optional[str] = None
 

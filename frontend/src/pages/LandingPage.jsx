@@ -81,7 +81,7 @@ export default function LandingPage() {
             Virlo gives your business a referral program in minutes.
             Watch the leaderboard fill up.
           </p>
-          <button className="btn-primary" onClick={() => navigate('/login')}>
+          <button className="btn-primary" onClick={() => navigate('/signup')}>
             Get Started
           </button>
         </div>
