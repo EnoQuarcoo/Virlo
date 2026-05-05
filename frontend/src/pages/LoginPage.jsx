@@ -47,7 +47,7 @@ export default function LoginPage() {
                 type="email"
                 placeholder="you@company.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {setEmail(e.target.value); setError("");}}
               />
             </div>
             <div className="field">
@@ -56,7 +56,7 @@ export default function LoginPage() {
                 type="password"
                 placeholder="••••••••"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {setPassword(e.target.value); setError("");}}
               />
             </div>
             {error && <p className="error">{error}</p>}

@@ -7,10 +7,14 @@ import { useState, useEffect } from "react";
 export default function Dashboard() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
-  const [campaigns, setCampaigns] = useState([])
+  const [campaigns, setCampaigns] = useState([]);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
+      if (!localStorage.getItem("token")) {
+        navigate("/login");
+        return;
+      }
       const response = await fetch("http://127.0.0.1:8000/campaigns", {
         method: "GET",
         headers: {
@@ -23,8 +27,8 @@ export default function Dashboard() {
       } else {
         const data = await response.json();
         // store the campaigns in state here
-        setCampaigns(data.campaigns)
-        console.log(data.campaigns)
+        setCampaigns(data.campaigns);
+        console.log(data.campaigns);
       }
     };
     fetchCampaigns();
@@ -59,7 +63,9 @@ export default function Dashboard() {
             <div className="campaigns-list">
               {campaigns.map((campaign) => (
                 <div key={campaign.id} className="campaign-card">
-                  <span className="campaign-name">{campaign.campaign_name}</span>
+                  <span className="campaign-name">
+                    {campaign.campaign_name}
+                  </span>
                   <button
                     className="btn-view"
                     onClick={() => navigate(`/campaigns/${campaign.id}`)}
@@ -71,7 +77,7 @@ export default function Dashboard() {
             </div>
           </div>
         )}
-       </main>
+      </main>
       <Footer />
     </div>
   );

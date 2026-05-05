@@ -13,7 +13,10 @@ export default function SignupPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
-  };
+    if (name === "email" || name === "password") {
+        setError("");
+    }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -51,7 +54,7 @@ export default function SignupPage() {
                 type="text"
                 name="company_name"
                 placeholder="Acme Inc."
-                value={form.company_name}
+                value={form.name}
                 onChange={handleChange}
               />
             </div>

@@ -66,7 +66,7 @@ export default function CampaignDetail() {
                 <tbody>
                   {leaderboard.map((entry, index) => (
                     <tr key={index}>
-                      <td className="cd-rank">{entry.rank}</td>
+                      <td className="cd-rank">{index + 1}</td>
                       <td>{entry.email}</td>
                       <td className="cd-link-cell">
                         <span className="cd-link">{entry.referral_link}</span>
