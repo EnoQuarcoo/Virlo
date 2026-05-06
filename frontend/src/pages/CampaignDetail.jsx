@@ -37,6 +37,8 @@ export default function CampaignDetail() {
 
   const handleCopy = (link, index) => {
     navigator.clipboard.writeText(link);
+    // Track which row was copied by index rather than a boolean so multiple
+    // "Copy" buttons can each show "Copied!" independently without interfering.
     setCopied(index);
     setTimeout(() => setCopied(null), 2000);
   };
@@ -64,6 +66,8 @@ export default function CampaignDetail() {
                   </tr>
                 </thead>
                 <tbody>
+                  {/* The backend already sorts by referral_count DESC, so
+                      index maps directly to rank — no client-side sort needed. */}
                   {leaderboard.map((entry, index) => (
                     <tr key={index}>
                       <td className="cd-rank">{index + 1}</td>

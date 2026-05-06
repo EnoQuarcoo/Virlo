@@ -8,9 +8,15 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [error, setError] = useState("");
   const [campaigns, setCampaigns] = useState([]);
+  const [apiKey, setApiKey] = useState("");
+  const [apiKeyCopied, setApiKeyCopied] = useState(false);
 
   useEffect(() => {
     const fetchCampaigns = async () => {
+      // Check for a token before hitting the API so we don't make an
+      // authenticated request that will fail — redirect immediately instead.
+      // This is a client-side convenience check, not a security boundary;
+      // the backend validates the token on every request.
       if (!localStorage.getItem("token")) {
         navigate("/login");
         return;
@@ -26,12 +32,29 @@ export default function Dashboard() {
         setError("Something broke");
       } else {
         const data = await response.json();
-        // store the campaigns in state here
         setCampaigns(data.campaigns);
-        console.log(data.campaigns);
+        setApiKey(data.api_key);
       }
     };
     fetchCampaigns();
+
+    // API key is fetched separately from campaigns because /company/me is the
+    // canonical source for account-level data, keeping campaign and company
+    // concerns on distinct endpoints.
+    const fetchApiKey = async () => {
+      const response = await fetch("http://127.0.0.1:8000/company/me", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setApiKey(data.api_key);
+      }
+    };
+    fetchApiKey();
   }, []);
   return (
     <div className="dashboard-page">
@@ -77,6 +100,24 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+        <div className="apikey-section">
+          <span className="apikey-label">Your API Key</span>
+          <div className="apikey-row">
+            <span className="apikey-value">{apiKey || "—"}</span>
+            <button
+              className="btn-copy-key"
+              onClick={() => {
+                navigator.clipboard.writeText(apiKey);
+                setApiKeyCopied(true);
+                // Reset label after 2 seconds — long enough to read "Copied!"
+                // but short enough that the button doesn't stay disabled-looking.
+                setTimeout(() => setApiKeyCopied(false), 2000);
+              }}
+            >
+              {apiKeyCopied ? "Copied!" : "Copy"}
+            </button>
+          </div>
+        </div>
       </main>
       <Footer />
     </div>

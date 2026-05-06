@@ -12,6 +12,9 @@ export default function CreateCampaign() {
     website_url: "",
     send_welcome_email : true,
   });
+  // Protocol is tracked as separate state so the user gets a clean URL input
+  // without having to type "https://". The backend's HttpUrl validator requires
+  // a scheme, so we prepend it before submitting.
   const [protocol, setProtocol] = useState("https://");
   const [error, setError] = useState("");
   const navigate = useNavigate();
@@ -23,6 +26,8 @@ export default function CreateCampaign() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Combine protocol + domain into a full URL before sending to the backend.
+    // The backend uses this URL as the base for all referral links in this campaign.
     const payload = { ...form, website_url: protocol + form.website_url };
     const response = await fetch("http://127.0.0.1:8000/campaigns", {
       method: "POST",

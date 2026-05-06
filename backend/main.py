@@ -1,16 +1,19 @@
 from fastapi import FastAPI, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
-from app.services.database import supabase 
+from app.services.database import supabase
 from app.routers.companies import router as companies_router
 from app.routers.campaigns import router as campaigns_router
 from app.routers.referrers import router as referrer_router
 from app.routers.referrals import router as referral_router
-from app.routers.leaderboards import router as leaderboard_router 
+from app.routers.leaderboards import router as leaderboard_router
 
 
 app = FastAPI()
 
-
+# Explicit origin allowlist instead of "*" because allow_credentials=True
+# and a wildcard origin is rejected by browsers (CORS spec forbids it).
+# Vite's dev server may bind to different ports on each start, so we allow
+# the common range (5173–5175) to avoid broken requests during local dev.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"],
@@ -23,6 +26,8 @@ app.add_middleware(
 def root():
     return {"message": "Virlo API is running"}
 
+# Development diagnostic endpoint — confirms the Supabase connection is live.
+# Remove before deploying to production to avoid exposing raw company data.
 @app.get("/testsupabase")
 def get_company_name():
     response = (

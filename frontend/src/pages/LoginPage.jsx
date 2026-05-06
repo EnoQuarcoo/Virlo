@@ -10,7 +10,6 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
-    //update the email and password
     e.preventDefault();
     const response = await fetch("http://127.0.0.1:8000/auth/login", {
       method: "POST",
@@ -22,9 +21,15 @@ export default function LoginPage() {
     if (!response.ok) {
       console.log("Something went wrong");
       const data = await response.json();
-      setError("Invalid email or password")
+      // Show the same message regardless of whether the email or password was
+      // wrong, matching the backend's intentionally generic error response to
+      // prevent email enumeration attacks.
+      setError("Invalid email or password");
     } else {
       const data = await response.json();
+      // JWT is stored in localStorage rather than a cookie so it persists
+      // across browser tabs and page refreshes without requiring server-side
+      // session management.
       localStorage.setItem("token", data.token);
       navigate("/dashboard");
     }
@@ -40,6 +45,8 @@ export default function LoginPage() {
         <div className="login-card">
           <h2>Welcome back</h2>
           <p>Sign in to your Virlo account</p>
+          {/* Clear the error as soon as the user edits either field so stale
+              error messages don't linger after they've corrected their input. */}
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="field">
               <label>Email</label>

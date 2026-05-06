@@ -123,3 +123,66 @@
     inset -2px -2px 6px #2e2e34;
   transform: translateY(1px);
 }
+
+.apikey-section {
+  margin-top: auto;
+  padding-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.apikey-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.apikey-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #212127;
+  border-radius: 14px;
+  padding: 16px 20px;
+  box-shadow:
+    inset 5px 5px 14px #141418,
+    inset -3px -3px 10px #2e2e34;
+}
+
+.apikey-value {
+  flex: 1;
+  font-family: monospace;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.55);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-copy-key {
+  flex-shrink: 0;
+  background: transparent;
+  color: #B56576;
+  border: 1.5px solid rgba(181, 101, 118, 0.4);
+  padding: 6px 16px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow:
+    -2px -2px 6px #2e2e34,
+    3px 3px 10px #141418;
+  transition: box-shadow 0.2s ease, transform 0.18s ease;
+  white-space: nowrap;
+}
+
+.btn-copy-key:hover {
+  box-shadow:
+    inset 2px 2px 6px #141418,
+    inset -2px -2px 5px #2e2e34;
+  transform: translateY(1px);
+}

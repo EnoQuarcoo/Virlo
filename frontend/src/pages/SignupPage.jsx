@@ -13,25 +13,30 @@ export default function SignupPage() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+    // Only clear the error when the user edits email or password — those are
+    // the fields that cause auth errors. The company name field is optional and
+    // doesn't trigger validation errors, so clearing on name change would be
+    // misleading.
     if (name === "email" || name === "password") {
-        setError("");
+      setError("");
     }
-};
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch("http://127.0.0.1:8000/auth/register", {
       method: "POST",
       headers: {
-        "Content-Type" : 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(form)
-      
-    })
+      body: JSON.stringify(form),
+    });
 
     if (!response.ok) {
-      setError("Something went wrong. Please try again")
+      setError("Something went wrong. Please try again");
     } else {
+      // The backend returns a JWT immediately after registration, so we store
+      // it and navigate to the dashboard — no separate login step needed.
       const data = await response.json();
       localStorage.setItem("token", data.token);
       navigate("/dashboard");
@@ -52,7 +57,7 @@ export default function SignupPage() {
               <label>Company Name</label>
               <input
                 type="text"
-                name="company_name"
+                name="name"
                 placeholder="Acme Inc."
                 value={form.name}
                 onChange={handleChange}
