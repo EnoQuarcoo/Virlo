@@ -3,6 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./CampaignDetail.css";
+import { API_URL } from "../config";
+
 
 export default function CampaignDetail() {
   const { id } = useParams();
@@ -15,7 +17,7 @@ export default function CampaignDetail() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       const response = await fetch(
-        `http://127.0.0.1:8000/campaigns/${id}/leaderboard`,
+        `${API_URL}/campaigns/${id}/leaderboard`,
         {
           method: "GET",
           headers: {

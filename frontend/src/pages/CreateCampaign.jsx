@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./CreateCampaign.css";
+import { API_URL } from "../config";
 
 export default function CreateCampaign() {
   const [form, setForm] = useState({
@@ -29,7 +30,7 @@ export default function CreateCampaign() {
     // Combine protocol + domain into a full URL before sending to the backend.
     // The backend uses this URL as the base for all referral links in this campaign.
     const payload = { ...form, website_url: protocol + form.website_url };
-    const response = await fetch("http://127.0.0.1:8000/campaigns", {
+    const response = await fetch(`${API_URL}/campaigns`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

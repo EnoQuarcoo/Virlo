@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./Dashboard.css";
 import { useState, useEffect } from "react";
+import { API_URL } from "../config";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export default function Dashboard() {
         navigate("/login");
         return;
       }
-      const response = await fetch("http://127.0.0.1:8000/campaigns", {
+      const response = await fetch(`${API_URL}/campaigns`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -42,7 +43,7 @@ export default function Dashboard() {
     // canonical source for account-level data, keeping campaign and company
     // concerns on distinct endpoints.
     const fetchApiKey = async () => {
-      const response = await fetch("http://127.0.0.1:8000/company/me", {
+      const response = await fetch(`${API_URL}/company/me`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",

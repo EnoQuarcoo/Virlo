@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 import { useState } from "react";
+import { API_URL } from "../config";
 
 export default function LoginPage() {
   //Create log in variables
@@ -11,7 +12,7 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await fetch("http://127.0.0.1:8000/auth/login", {
+    const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
