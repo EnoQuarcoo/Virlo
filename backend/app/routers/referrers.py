@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Header, HTTPException
 from app.models.referrer import Referrer
 import secrets
 import string
 from app.services.database import supabase
+from app.services.auth import get_company_id_from_api_key
 
 def generate_referral(length=6):
     # This alphabet deliberately omits visually ambiguous characters:
@@ -18,18 +19,27 @@ def generate_referral(length=6):
 router = APIRouter()
 
 @router.post("/campaigns/{campaign_id}/signup")
-def create_referrer(campaign_id: str, data: Referrer):
+def create_referrer(campaign_id: str, data: Referrer, x_api_key:str=Header(None)):
+    company_id = get_company_id_from_api_key(x_api_key)
     # Fetch the campaign's website_url to build the referral link server-side.
     # The client doesn't know the base URL, and building it server-side ensures
     # the link always points to the canonical URL stored at campaign creation.
     response = (
         supabase.table("campaigns")
-        .select("website_url")
+        .select("website_url, company_id")
         .eq("id", campaign_id)
         .execute()
     )
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+
+    campaign = response.data[0]
+
+    if campaign["company_id"] != company_id:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
     referral_code = generate_referral()
-    website_link = response.data[0]["website_url"]
+    website_link = campaign["website_url"]
     # Append the referral code as a query parameter so the campaign page can
     # detect it and trigger tracking via the /referrals/track endpoint.
     referral_link = website_link + "?ref=" + referral_code
@@ -48,3 +58,4 @@ def create_referrer(campaign_id: str, data: Referrer):
         .execute()
     )
     return {"message": "Referrer created", "referral_link": referral_link}
+

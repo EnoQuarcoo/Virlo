@@ -5,6 +5,7 @@ import os
 from app.config import JWT_SECRET
 import secrets
 from fastapi import HTTPException
+from app.services.database import supabase
 
 
 # Bcrypt is intentionally slow (cost factor ~12 rounds by default), making
@@ -81,3 +82,28 @@ def get_company_id_from_token(authorization):
     company_id = decoded_access_token["company_id"]
 
     return company_id
+
+def get_company_id_from_api_key(authorization):
+    
+    if not authorization:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
+    api_key =  authorization
+
+    response = (
+        supabase.table("companies")
+        .select("api_key, id") #table name 
+        .eq("api_key", api_key)
+        .execute()
+    )
+
+    if not response.data:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+    
+    return response.data[0]["id"]
+
+
+
+
+
+
