@@ -7,17 +7,36 @@ from app.routers.referrers import router as referrer_router
 from app.routers.referrals import router as referral_router
 from app.routers.leaderboards import router as leaderboard_router
 
+def get_allowed_origins():
+    response = ( supabase.table("companies")
+                .select("website_url")
+                .execute()
+                )
+    allowed_origins = []
+    for company in response.data:
+        allowed_origins.append(company["website_url"])
+    # Vite's dev server may bind to different ports on each start, so we allow
+    # the common range (5173–5175) to avoid broken requests during local dev.
+    allowed_origins += [
+        "http://localhost:5173",
+        "http://localhost:5174", 
+        "http://localhost:5175",
+        "https://virlo-eta.vercel.app"
+    ]
+    return allowed_origins 
+
+    
+
+
 
 app = FastAPI()
 
-# Explicit origin allowlist instead of "*" because allow_credentials=True
-# and a wildcard origin is rejected by browsers (CORS spec forbids it).
-# Vite's dev server may bind to different ports on each start, so we allow
-# the common range (5173–5175) to avoid broken requests during local dev.
+# get_allowed_origins() is called once at startup. New company domains
+# won't be allowed until the server restarts. A production fix would be
+# middleware that queries allowed origins dynamically on each request.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:5174", 
-    "http://localhost:5175", "https://virlo-eta.vercel.app"],
+    allow_origins=get_allowed_origins(),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
