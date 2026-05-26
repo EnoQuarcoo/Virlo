@@ -32,28 +32,36 @@ def create_campaign(data: CreateCampaign, authorization: str = Header(None)):
     return {"message": "Campaign created", "campaign": response.data[0]}
 
 
+
+@router.get("/campaigns/{campaign_id}")
+def campaign_details(campaign_id: str, authorization: str = Header(None)):
+    company_id = get_company_id_from_token(authorization)
+    response = (
+        supabase.table("campaigns")
+        .select("*")
+        .eq("id", campaign_id)
+        .execute()
+    )
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+    campaign = response.data[0]
+    # Ownership check: any authenticated company can hit this endpoint with an
+    # arbitrary campaign_id, so we verify the campaign belongs to the requester.
+    if campaign["company_id"] != company_id:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    return {"message": "Campaign data retrieved", "campaign": campaign}
+
+
+
+# Returns all campaigns owned by the authenticated company.
 @router.get("/campaigns")
 def fetch_campaigns(authorization: str = Header(None)):
-    # Filtering by company_id extracted from the JWT means each company only
-    # ever sees its own campaigns — no additional ownership check needed on
-    # each row.
-    if not authorization:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    token = authorization.replace("Bearer ", "")
-    decoded_access_token = decode_access_token(token)
-
-    if decoded_access_token is None:
-        raise HTTPException(status_code=401, detail="Unauthorized")
-
-    company_id = decoded_access_token["company_id"]
-
+    company_id = get_company_id_from_token(authorization)
     response = (
         supabase.table("campaigns")
         .select("*")
         .eq("company_id", company_id)
         .execute()
     )
-
     return {"message": "Campaigns retrieved", "campaigns": response.data}
-  
+

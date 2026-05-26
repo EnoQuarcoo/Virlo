@@ -1,36 +1,36 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import "./CampaignDetail.css";
 import { API_URL } from "../config";
 
-
 export default function CampaignDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [campaignName, setCampaignName] = useState("");
   const [leaderboard, setLeaderboard] = useState([]);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(null);
+  const [campaignIDCopied, setCampaignIDCopied] = useState(false);
+  const location = useLocation();
+  // Populated by navigate() in Dashboard — avoids a second API call just for
+  // the campaign name and ID. Will be null if the user navigates directly to this URL.
+  const campaignData = location.state
 
+  // Re-runs if the campaign id in the URL changes (e.g. back/forward navigation).
   useEffect(() => {
     const fetchLeaderboard = async () => {
-      const response = await fetch(
-        `${API_URL}/campaigns/${id}/leaderboard`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      const response = await fetch(`${API_URL}/campaigns/${id}/leaderboard`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
       if (!response.ok) {
         setError("Failed to load leaderboard.");
       } else {
         const data = await response.json();
-        setCampaignName(data.campaign_name);
         setLeaderboard(data.leaderboard);
       }
     };
@@ -49,14 +49,19 @@ export default function CampaignDetail() {
     <div className="cd-page">
       <Navbar />
       <main className="cd-main">
-        <button className="cd-back" onClick={() => navigate("/dashboard")}>
+        <button
+          className="cd-back"
+          onClick={() => {
+            navigate("/dashboard");
+          }}
+        >
           ← Back
         </button>
         {error ? (
           <p className="cd-error">{error}</p>
         ) : (
           <>
-            <h1 className="cd-title">{campaignName}</h1>
+            <h1 className="cd-title">{campaignData?.campaignName}</h1>
             <div className="cd-card">
               <table className="cd-table">
                 <thead>
@@ -88,6 +93,23 @@ export default function CampaignDetail() {
                   ))}
                 </tbody>
               </table>
+            </div>
+            {/* Campaign ID displayed here so the user can copy it for use with the public signup API. */}
+            <div className="apikey-section">
+              <span className="apikey-label">Campaign ID</span>
+              <div className="apikey-row">
+                <span className="apikey-value">{campaignData?.campaignID || "—"}</span>
+                <button
+                  className="btn-copy-key"
+                  onClick={() => {
+                    navigator.clipboard.writeText(String( campaignData?.campaignID));
+                    setCampaignIDCopied(true);
+                    setTimeout(() => setCampaignIDCopied(false), 2000);
+                  }}
+                >
+                  {campaignIDCopied ? "Copied!" : "Copy"}
+                </button>
+              </div>
             </div>
           </>
         )}

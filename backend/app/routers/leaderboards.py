@@ -19,5 +19,7 @@ def get_leaderboard(campaign_id):
         .order("referral_count", desc=True)
         .execute()
     )
-    return {"leaderboard": response.data}
+    return {
+        "leaderboard": response.data
+        }
 

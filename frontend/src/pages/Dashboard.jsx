@@ -92,7 +92,13 @@ export default function Dashboard() {
                   </span>
                   <button
                     className="btn-view"
-                    onClick={() => navigate(`/campaigns/${campaign.id}`)}
+                    onClick={() => {
+                      // Pass name and ID via router state so CampaignDetail
+                      // doesn't need a separate fetch just for display values.
+                      navigate(`/campaigns/${campaign.id}`, {
+                        state: { campaignName: campaign.campaign_name , campaignID: campaign.id }
+                      });
+                    }}
                   >
                     View
                   </button>
