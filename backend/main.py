@@ -23,6 +23,7 @@ def get_allowed_origins():
         "http://localhost:5175",
         "https://virlo-eta.vercel.app"
     ]
+    print("ALLOWED ORIGINS:", allowed_origins)
     return allowed_origins 
 
     
