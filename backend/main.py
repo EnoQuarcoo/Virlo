@@ -6,8 +6,7 @@ from app.routers.campaigns import router as campaigns_router
 from app.routers.referrers import router as referrer_router
 from app.routers.referrals import router as referral_router
 from app.routers.leaderboards import router as leaderboard_router
-from fastapi import Request
-from fastapi.responses import JSONResponse
+
 
 def get_allowed_origins():
     response = ( supabase.table("companies")
@@ -28,7 +27,6 @@ def get_allowed_origins():
         "http://localhost:5175",
         "https://virlo-eta.vercel.app"
     ]
-    print("ALLOWED ORIGINS:", allowed_origins)
     return allowed_origins 
 
     
@@ -48,32 +46,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-#temp code for testing 
-@app.options("/{rest_of_path:path}")
-async def preflight_handler(request: Request, rest_of_path: str):
-    return JSONResponse(
-        content={},
-        headers={
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
-            "Access-Control-Allow-Headers": "*",
-        }
-    )
-
 @app.get("/")
 def root():
     return {"message": "Virlo API is running"}
 
-# Development diagnostic endpoint — confirms the Supabase connection is live.
-# Remove before deploying to production to avoid exposing raw company data.
-@app.get("/testsupabase")
-def get_company_name():
-    response = (
-        supabase.table("companies")
-        .select("*")
-        .execute()
-    )
-    return response.data
 
 app.include_router(companies_router)
 app.include_router(campaigns_router)
