@@ -6,6 +6,8 @@ from app.routers.campaigns import router as campaigns_router
 from app.routers.referrers import router as referrer_router
 from app.routers.referrals import router as referral_router
 from app.routers.leaderboards import router as leaderboard_router
+from fastapi import Request
+from fastapi.responses import JSONResponse
 
 def get_allowed_origins():
     response = ( supabase.table("companies")
@@ -45,6 +47,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+#temp code for testing 
+@app.options("/{rest_of_path:path}")
+async def preflight_handler(request: Request, rest_of_path: str):
+    return JSONResponse(
+        content={},
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, GET, OPTIONS",
+            "Access-Control-Allow-Headers": "*",
+        }
+    )
 
 @app.get("/")
 def root():
