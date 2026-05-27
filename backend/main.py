@@ -15,7 +15,8 @@ def get_allowed_origins():
     allowed_origins = []
     for company in response.data:
         #filter out null values
-        if company["website_url"]:
+        url = company["website_url"]
+        if url and url != "None":
             allowed_origins.append(company["website_url"])
     # Vite's dev server may bind to different ports on each start, so we allow
     # the common range (5173–5175) to avoid broken requests during local dev.
