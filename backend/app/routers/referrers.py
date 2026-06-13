@@ -24,26 +24,39 @@ def create_referrer(campaign_id: str, data: Referrer, x_api_key:str=Header(None)
     # Fetch the campaign's website_url to build the referral link server-side.
     # The client doesn't know the base URL, and building it server-side ensures
     # the link always points to the canonical URL stored at campaign creation.
-    response = (
+    campaign_response = (
         supabase.table("campaigns")
         .select("website_url, company_id")
         .eq("id", campaign_id)
         .execute()
     )
-    if not response.data:
+    if not campaign_response.data:
         raise HTTPException(status_code=404, detail="Campaign not found")
 
-    campaign = response.data[0]
+    campaign = campaign_response.data[0]
 
     if campaign["company_id"] != company_id:
         raise HTTPException(status_code=403, detail="Unauthorized")
+    
+
+    #Check if referrer already exists for this campaign
+    existing_referrer_response = (
+        supabase.table("referrers")
+        .select("*")
+        .eq("email", data.email)
+        .eq("campaign_id", campaign_id)
+        .execute()
+    )
+
+    if existing_referrer_response.data:
+        return {"message": "Referrer already exists", "referral_link": existing_referrer_response.data[0]["referral_link"]}
 
     referral_code = generate_referral()
     website_link = campaign["website_url"]
     # Append the referral code as a query parameter so the campaign page can
     # detect it and trigger tracking via the /referrals/track endpoint.
     referral_link = website_link + "?ref=" + referral_code
-    response = (
+    add_referrer_response = (
         supabase.table("referrers")
         .insert({
             "name": data.name,
@@ -58,4 +71,6 @@ def create_referrer(campaign_id: str, data: Referrer, x_api_key:str=Header(None)
         .execute()
     )
     return {"message": "Referrer created", "referral_link": referral_link}
+
+
 
