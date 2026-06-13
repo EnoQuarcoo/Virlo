@@ -8,6 +8,7 @@ export default function Footer() {
       <div className="footer-links">
         <Link to="/terms">Terms</Link>
         <Link to="/privacy">Privacy</Link>
+        <a href="https://virlo.mintlify.app" target="_blank" rel="noreferrer">Documentation</a>
       </div>
     </footer>
   );
