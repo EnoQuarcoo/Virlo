@@ -1,5 +1,6 @@
 import { Fragment, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import Footer from '../components/Footer'
 import './LandingPage.css'
 
 function useScrollReveal() {
@@ -132,13 +133,7 @@ export default function LandingPage() {
       </section>
 
       {/* ── Footer ── */}
-      <footer className="footer">
-        <Link to="/" className="footer-logo">Virlo</Link>
-        <div className="footer-links">
-          <span>Terms</span>
-          <span>Privacy</span>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }
