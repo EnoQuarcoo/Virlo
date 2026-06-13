@@ -14,7 +14,7 @@ def get_leaderboard(campaign_id):
     # all referrers into memory first.
     response = (
         supabase.table("referrers")
-        .select("*")
+        .select("name, referral_count")
         .eq("campaign_id", campaign_id)
         .order("referral_count", desc=True)
         .execute()
